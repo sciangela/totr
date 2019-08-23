@@ -21,6 +21,8 @@ Travel Events: Nazghul attack, Uruk-Hai war party, Eye of Sauron,
 
 Random status effects: Spider Bite, Ring Madness, Fleshwound, "Lazy Hobbit"
 
+Class for companions to include: type (gardener, ranger, warrior), name, race (human, hobbit, dwarf, elf), status (see Random Status)
+
 Chapter 1: Shire to Bree 120 miles
 Chapter 2: Bree to Weathertop 95 miles
 Chapter 3: Weathertop to Rivendell 253 miles
