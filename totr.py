@@ -93,6 +93,7 @@ f.ponies = 2
 f.miles = 1535
 f.day = 0
 f.food = 0
+f.daysleft = 1
 
 
 def party():
@@ -104,8 +105,9 @@ def party():
         elif continue_choice == "n" or continue_choice == "N":
             main()
  
+
 #main and starting stats for main player. Death statement. 
-def ringbearer():
+def ringbearer(r):
     r.alive == True
     r.fleshwound = False
     r.RingMad = False
@@ -119,7 +121,7 @@ def ringbearer():
             main()
 
 #main and starting stats for companion character. Death statement.
-def gardener():
+def gardener(g):
     g.alive == True
     g.fleshwound = False
     g.LazyHobbit = False
@@ -322,7 +324,7 @@ def travelevents():
             while f.weapons <= 0:
                 print("You have no weapons! The Nazgul overpower you and kill the party in their quest for the ring.")
                 r.alive == False
-            while weapons >0:
+            while f.weapons >0:
                 brawl = random.randint(1,3)
                 if brawl ==1:
                     print("\n")
@@ -442,6 +444,10 @@ def deathcheck():
         print("You have run out of resources. You cannot possibly go on.")
         r.alive == False
         ringbearer()
+    elif f.daysleft == 0:
+        print("You couldn't find help in time. You didn't make it.")
+        r.alive == False
+        ringbearer()
 
 #Travel marker for chapter 1
 def trav1():
@@ -559,15 +565,24 @@ def options2():
         helpchoices()
     if select =="quit":
         quit_check()        
-        
+
+daysleft = 4
+#morgal blade death timer
+def mbtimer():
+    if daysleft == 0:
+        r.alive == FALSE
+        ringbearer()        
         
 #Chapter 3 text/story
 def chap3():
     print("\n")
-    print("As you make your journey to Rivendell, you are waylayed by the Nazgul.")
-    time.sleep(1)
+    print("Strider successfully leads your party through the Midgewater Marshes.")
+    print("As you make your journey to Rivendell, you rest at the ruin of Weathertop.")
+    print("There, you are waylayed by five of the Nazgul.")
+    time.sleep(2)
     print("\n")
-    print("Oh no! "+(str(player_name))+" is stabbed by their leader.")
+    print("In an attempt to hide from them, "+(str(player_name))+" put on the ring.")
+    print("Oh no! "+(str(player_name))+" is stabbed with a poisoned Morgul blade by their leader.")
     print("\n")
     print("       .---.")
     print("       |---|")
@@ -587,28 +602,143 @@ def chap3():
     print("        \*/")
     print("         V")
     print("\n")
+    time.sleep(2)
+    print("Strider managed to fight away the Nazgul with fire and blade.")
     time.sleep(1)
+    print("\n")
+    print("Strider is unable to heal "+(str(player_name))+"'s wound.")
+    print("A poisoned tip of the Ringwraith's blade remains in their flesh, moving toweard their heart.")
+    time.sleep(1)
+    print("\n")
+    print((str(player_name))+" doesn't have much time left.")
+    print("\n")
     print("The elf, Arwen, appears. She offers aid, and hurries the party on to Rivendell.")
     print("\n")
-    print("Arwen has joined your party. She brings her horse, weapons, and supplies.")
+    print("Arwen has joined your party. She brings her horse, Asfaloth, weapons, and supplies.")
     f.companions.append("Arwen")
     f.food += 30
     f.water += 30
     f.ponies += 1
-    trav3()
+    init_stat()
+    print("\n")
+    print("Arwen urges that there isn't much time left for "+(str(player_name)))
+    print("'I'll carry them, I can move faster than the group,' she urges")
+    time.sleep(1)
+    print("\n")
+    print("Should "+(str(player_name))+" travel with Arwen? Or remain with the larger group?")
+    print("Note, if you don't make it to Rivendell in 4 days, "+(str(player_name))+" will surely die.")
+    print("1.) Travel with Arwen")
+    print("2.) Travel with the full group")
+    option = input("-->")
+    if option == "1" or option == "Arwen":
+        f.companions.remove(companion_name)
+        f.companions.remove("Strider")
+        f.companions.remove("Pippin")
+        f.companions.remove("Merry")
+        f.ponies = 1
+        f.daysleft = 5
+        trav3a()
+    elif option == "2" or option == "group" or option == "party":
+        trav3b()
+    else:
+        print("please check your input and try again")
+        option = input("-->")
 
-def trav3():
+
+
+#traveling with Arwen
+def trav3a():
     print("\n")
     print("Weathertop ----------> Rivendell")
     init_stat()
     while 1067 < f.miles <=1320:
-        options3()
+        options3a()
     else:
         chap4()
 
-def options3():
-    print("PLACEHOLDER")
+#traveling with the party
+def trav3b():
+    print("\n")
+    print("Weathertop ----------> Rivendell")
+    init_stat()
+    while 1067 < f.miles <=1320:
+        options3b()
+    else:
+        chap4()
+        
+ #swift travel with Arwen, no stopping for supplies       
+def options3a():
+    print("\n")
+    print("We must make haste. Do not tarry.")
+    select = input("travel, help, quit: ")
+    if select == "travel":
+        progress_swift()
+        trav3a()
+    if select=="help":
+        helpchoices()
+    if select =="quit":
+        quit_check()  
+
+#travel options with the party.
+def options3b():
+    print("\n")
+    print("what would you like to do?")
+    select = input("travel, forage, hunt, rest, help, quit: ")
+    if select == "travel":
+        progress_slow()
+        trav2()
+    if select == "forage":
+        print("\n")
+        print("Arwen and Strider urge you to hurry. Though if you can find the Kingsfoil plant, it might help prevent the poison from spreading.")
+        forage()
+        print((str(companion_name))+" manages to find Kingsfoil. Perhaps "+(str(player_name))+" might make it another day.")
+        daysleft +=1
+        trav2()
+    if select == "hunt":
+        print("\n")
+        print("Strider grabs his bow and leaves the camp to hunt.")
+        daysleft -=1
+        hunt()
+        trav2()
+    if select == "rest":
+        print("\n")
+        print("The hobbits are exhausted and stop to rest.")
+        print("\n")
+        daysleft -=1
+        rest()
+        trav2()
+    if select=="help":
+        helpchoices()
+    if select =="quit":
+        quit_check() 
+
+#Arwen speed
+def progress_swift():
+    f.daysleft -=1
+    mbtimer()
+    deathcheck()
+    miles_traveled = random.randint(50,80)
+    f.day +=1
+    f.miles = f.miles - miles_traveled + f.ponies*5
+    f.food = f.food - 1 - len(f.companions) - f.ponies
+    f.water = f.water - 1 - len(f.companions) - f.ponies
+    
+#party speed - slightly increased for fairness and a possibility to make it    
+def progress_slow():
+    f.daysleft -=1
+    mbtimer()
+    deathcheck()
+    miles_traveled = random.randint(40,70)
+    f.day +=1
+    f.miles = f.miles - miles_traveled + f.ponies*5
+    f.food = f.food - 1 - len(f.companions) - f.ponies
+    f.water = f.water - 1 - len(f.companions) - f.ponies    
+    
+
+    
+def chap4():
+    print("placeholder")
     quit()
 
-
+    
 main()
